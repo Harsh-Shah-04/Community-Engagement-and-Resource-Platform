@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js"; // 👈 import routes
+import issueRoutes from "./routes/issueRoutes.js";
+
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 // User routes
-app.use("/api/users", userRoutes);  // 👈 add this
+app.use("/api/users", userRoutes);
+app.use("/api/issues", issueRoutes);
 
 export default app;
