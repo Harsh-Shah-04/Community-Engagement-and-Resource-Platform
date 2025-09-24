@@ -1,11 +1,11 @@
 import express from "express";
 import { createIssue, getIssues } from "../controllers/issueController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // POST /api/issues -> create issue
-router.post("/", authMiddleware, createIssue);
+router.post("/", protect, createIssue);
 
 // GET /api/issues -> get all issues
 router.get("/", getIssues);
