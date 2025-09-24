@@ -12,12 +12,51 @@ function App() {
   const [user, setUser] = useState(null);
   const [showAuthForm, setShowAuthForm] = useState('login'); // 'login' or 'register'
 
+  // Function to clear corrupted localStorage
+  const clearCorruptedStorage = () => {
+    try {
+      const keys = ['user', 'token'];
+      keys.forEach(key => {
+        const value = localStorage.getItem(key);
+        if (value === 'undefined' || value === 'null') {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      console.error('Error clearing storage:', error);
+    }
+  };
+
   useEffect(() => {
+    // Clear any corrupted localStorage first
+    clearCorruptedStorage();
+    
     // Check if user is already logged in
     const token = tokenUtils.getToken();
     const savedUser = localStorage.getItem('user');
+    
+    // Clear any invalid data first
+    if (savedUser === 'undefined' || savedUser === 'null' || !savedUser) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      return;
+    }
+    
     if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        if (parsedUser && typeof parsedUser === 'object' && parsedUser._id) {
+          setUser(parsedUser);
+        } else {
+          // Invalid user object, clear storage
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
     }
   }, []);
 

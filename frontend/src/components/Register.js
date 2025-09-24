@@ -24,13 +24,17 @@ const Register = ({ onRegisterSuccess }) => {
     setError('');
     setSuccess('');
 
+    console.log('Registration attempt with data:', formData);
+    
     try {
-      await authAPI.register(formData);
+      const response = await authAPI.register(formData);
+      console.log('Registration successful:', response);
       setSuccess('Registration successful! You can now login.');
       setFormData({ name: '', email: '', password: '' });
       if (onRegisterSuccess) onRegisterSuccess();
     } catch (err) {
-      setError(err.message);
+      console.error('Registration error:', err);
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

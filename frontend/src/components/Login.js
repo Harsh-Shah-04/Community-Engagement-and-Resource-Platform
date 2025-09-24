@@ -24,8 +24,15 @@ const Login = ({ onLogin }) => {
     try {
       const response = await authAPI.login(formData);
       tokenUtils.setToken(response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
-      onLogin(response.user);
+      // Backend returns user data directly, not in response.user
+      const userData = {
+        _id: response._id,
+        name: response.name,
+        email: response.email,
+        role: response.role
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      onLogin(userData);
     } catch (err) {
       setError(err.message);
     } finally {
