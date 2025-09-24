@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// Middleware to protect routes (only authenticated users can access)
+// Middleware to protect routes (only authenticated users can access) - Enhanced version
 export const protect = async (req, res, next) => {
   try {
     let token;
@@ -30,3 +30,22 @@ export const protect = async (req, res, next) => {
     res.status(401).json({ message: "Not authorized, token failed" });
   }
 };
+
+// Simple auth middleware (for backward compatibility)
+const authMiddleware = (req, res, next) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    return res.status(401).json({ message: "No token, authorization denied" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // add user data to request
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Token is not valid" });
+  }
+};
+
+export default authMiddleware;

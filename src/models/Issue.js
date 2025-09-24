@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const issueSchema = new mongoose.Schema({
     // User report text
@@ -91,9 +91,10 @@ const issueSchema = new mongoose.Schema({
         default: 'other'
     },
     
-    // User who reported (will be populated when auth is integrated)
+    // User who reported 
     reportedBy: {
-        type: String, // Will be user ID when auth is integrated
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: false
     },
     
@@ -152,4 +153,6 @@ issueSchema.methods.updateStatus = function(newStatus, userId = null) {
     return this.save();
 };
 
-module.exports = mongoose.model('Issue', issueSchema);
+const Issue = mongoose.model('Issue', issueSchema);
+
+export default Issue;
