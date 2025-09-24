@@ -48,6 +48,11 @@ export const issueAPI = {
   
   getAllIssues: () => apiRequest('/issues', {
     method: 'GET'
+  }),
+  
+  updateIssueStatus: (issueId, status) => apiRequest(`/issues/${issueId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status })
   })
 };
 

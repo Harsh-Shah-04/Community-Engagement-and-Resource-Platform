@@ -23,23 +23,24 @@ const AdminPanel = ({ user }) => {
     }
   };
 
-  // Note: This function will need a backend API endpoint
   const updateIssueStatus = async (issueId, newStatus) => {
     try {
       setUpdatingIssue(issueId);
-      // This API endpoint doesn't exist yet - your friend needs to create it
-      // await issueAPI.updateIssueStatus(issueId, newStatus);
       
-      // For now, update locally (remove this when backend API is ready)
+      // Call the backend API to update issue status
+      const response = await issueAPI.updateIssueStatus(issueId, newStatus);
+      
+      // Update the local state with the response from backend
       setIssues(prevIssues =>
         prevIssues.map(issue =>
-          issue._id === issueId ? { ...issue, status: newStatus } : issue
+          issue._id === issueId ? response.issue : issue
         )
       );
       
-      alert(`Issue status updated to ${newStatus}! (Note: This is frontend-only until backend API is created)`);
+      alert(`Issue status updated to ${newStatus} successfully!`);
     } catch (err) {
       setError(err.message);
+      alert(`Error updating issue: ${err.message}`);
     } finally {
       setUpdatingIssue(null);
     }
