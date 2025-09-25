@@ -8,7 +8,7 @@ const router = express.Router();
 // All complaint routes require authentication
 router.use(protect);
 
-// Route: POST /api/complaints - Create new complaint
+// Route: POST /api/complaints - Create new complaint with photo upload
 router.post("/", upload.single("photo"), createComplaint);
 
 // Route: GET /api/complaints - Get all complaints (user's own or all if admin)

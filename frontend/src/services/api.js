@@ -45,9 +45,42 @@ export const issueAPI = {
     method: 'POST',
     body: JSON.stringify(issueData)
   }),
+
+  // NEW: Create issue with photo upload (FormData)
+  createIssueWithPhoto: async (formData) => {
+    const token = localStorage.getItem('token');
+    
+    const config = {
+      method: 'POST',
+      headers: {
+        // Don't set Content-Type for FormData - browser will set it automatically with boundary
+        ...(token && { Authorization: `Bearer ${token}` })
+      },
+      body: formData // FormData object
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/issues`, config);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
+      }
+      
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
   
   getAllIssues: () => apiRequest('/issues', {
     method: 'GET'
+  }),
+
+  // Update issue status (admin only)
+  updateIssueStatus: (issueId, status) => apiRequest(`/issues/${issueId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status })
   })
 };
 

@@ -23,23 +23,22 @@ const AdminPanel = ({ user }) => {
     }
   };
 
-  // Note: This function will need a backend API endpoint
+  // Update issue status - NOW WORKS WITH REAL API!
   const updateIssueStatus = async (issueId, newStatus) => {
     try {
       setUpdatingIssue(issueId);
-      // This API endpoint doesn't exist yet - your friend needs to create it
-      // await issueAPI.updateIssueStatus(issueId, newStatus);
+      const response = await issueAPI.updateIssueStatus(issueId, newStatus);
       
-      // For now, update locally (remove this when backend API is ready)
+      // Update local state
       setIssues(prevIssues =>
         prevIssues.map(issue =>
           issue._id === issueId ? { ...issue, status: newStatus } : issue
         )
       );
       
-      alert(`Issue status updated to ${newStatus}! (Note: This is frontend-only until backend API is created)`);
+      alert(`Issue status updated to ${newStatus} successfully!`);
     } catch (err) {
-      setError(err.message);
+      setError(`Failed to update status: ${err.message}`);
     } finally {
       setUpdatingIssue(null);
     }
@@ -81,8 +80,8 @@ const AdminPanel = ({ user }) => {
           <div className="stat-number">{issues.length}</div>
         </div>
         <div className="stat-card">
-          <h3>Pending</h3>
-          <div className="stat-number">{issues.filter(i => i.status === 'open').length}</div>
+          <h3>Reported</h3>
+          <div className="stat-number">{issues.filter(i => i.status === 'reported').length}</div>
         </div>
         <div className="stat-card">
           <h3>In Progress</h3>
@@ -100,7 +99,7 @@ const AdminPanel = ({ user }) => {
           <div key={issue._id} className="admin-issue-card">
             <div className="issue-content">
               <div className="issue-header">
-                <h4>{issue.title}</h4>
+                <h4>{issue.report || issue.title || 'Untitled Issue'}</h4>
                 <div 
                   className="status-badge"
                   style={{ backgroundColor: getStatusColor(issue.status) }}
@@ -109,11 +108,28 @@ const AdminPanel = ({ user }) => {
                 </div>
               </div>
               
-              <p className="issue-description">{issue.description}</p>
+              {/* Display photo if available */}
+              {issue.photo && issue.photo.filename && (
+                <div className="admin-issue-photo">
+                  <img 
+                    src={`http://localhost:5000/uploads/${issue.photo.filename}`} 
+                    alt="Issue" 
+                    className="admin-issue-image"
+                  />
+                </div>
+              )}
+              
+              <p className="issue-description">{issue.report || issue.description}</p>
+              
+              <div className="issue-details">
+                <div><strong>Location:</strong> {issue.location?.address || 'Not specified'}</div>
+                <div><strong>Category:</strong> {issue.category || 'other'}</div>
+                <div><strong>Priority:</strong> {issue.priority || 'medium'}</div>
+              </div>
               
               <div className="issue-meta">
-                <span>Reported by: {issue.createdBy?.name || 'Anonymous'}</span>
-                <span>Email: {issue.createdBy?.email || 'N/A'}</span>
+                <span>Reported by: {issue.reportedBy?.name || 'Anonymous'}</span>
+                <span>Email: {issue.reportedBy?.email || 'N/A'}</span>
                 <span>Date: {new Date(issue.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
@@ -122,11 +138,18 @@ const AdminPanel = ({ user }) => {
               <label>Update Status:</label>
               <div className="status-buttons">
                 <button
-                  onClick={() => updateIssueStatus(issue._id, 'open')}
-                  disabled={updatingIssue === issue._id || issue.status === 'open'}
-                  className={`status-btn ${issue.status === 'open' ? 'active' : ''}`}
+                  onClick={() => updateIssueStatus(issue._id, 'reported')}
+                  disabled={updatingIssue === issue._id || issue.status === 'reported'}
+                  className={`status-btn ${issue.status === 'reported' ? 'active' : ''}`}
                 >
-                  Open
+                  Reported
+                </button>
+                <button
+                  onClick={() => updateIssueStatus(issue._id, 'assigned')}
+                  disabled={updatingIssue === issue._id || issue.status === 'assigned'}
+                  className={`status-btn ${issue.status === 'assigned' ? 'active' : ''}`}
+                >
+                  Assigned
                 </button>
                 <button
                   onClick={() => updateIssueStatus(issue._id, 'in-progress')}

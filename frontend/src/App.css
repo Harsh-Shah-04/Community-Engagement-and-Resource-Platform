@@ -211,6 +211,63 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* Form row for side-by-side fields */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* File upload styles */
+.file-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px dashed #e1e1e1;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.file-input:hover {
+  border-color: #667eea;
+}
+
+.file-help {
+  color: #888;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.file-preview {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.remove-file-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.3s ease;
+}
+
+.remove-file-btn:hover {
+  background: #c0392b;
+}
+
 /* Issues Dashboard */
 .issues-dashboard {
   background: white;
@@ -320,14 +377,64 @@ body {
   line-height: 1.5;
 }
 
+/* Issue photo display */
+.issue-photo {
+  margin: 1rem 0;
+}
+
+.issue-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.issue-details {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 5px;
+  margin: 1rem 0;
+}
+
+.issue-details > div {
+  margin-bottom: 0.5rem;
+}
+
+.issue-details > div:last-child {
+  margin-bottom: 0;
+}
+
+.issue-location,
+.issue-category,
+.issue-priority {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* Admin panel photo styles */
+.admin-issue-photo {
+  margin: 1rem 0;
+}
+
+.admin-issue-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.issue-details strong {
+  color: #333;
+}
+
 .issue-meta {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
   color: #888;
+  margin-top: 1rem;
 }
-
-/* Admin Panel */
 .admin-panel {
   background: white;
   border-radius: 10px;

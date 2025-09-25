@@ -29,6 +29,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      role: "user" // TEMPORARY: Make all new users admin for testing
     });
 
     await user.save();
@@ -41,43 +42,6 @@ export const registerUser = async (req, res) => {
 };
 
 // LOGIN user
-export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    // check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    // create and return JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || "fallback_secret_key",
-      { expiresIn: "7d" }
-    );
-
-    res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -96,9 +60,9 @@ export const loginUser = async (req, res) => {
 
     // Create JWT token
     const token = jwt.sign(
-      { id: user._id, role: user.role },  // payload
-      process.env.JWT_SECRET,             // secret key
-      { expiresIn: "1h" }                 // token expiry
+      { id: user._id, role: user.role },  // payload - includes role for admin access
+      process.env.JWT_SECRET || "fallback_secret_key",             // secret key
+      { expiresIn: "7d" }                 // token expiry
     );
 
     res.json({

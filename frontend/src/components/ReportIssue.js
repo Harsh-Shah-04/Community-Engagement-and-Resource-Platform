@@ -5,8 +5,12 @@ const ReportIssue = ({ user, onIssueCreated }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    location: ''
+    location: '',
+    category: 'other',
+    priority: 'medium'
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -18,6 +22,20 @@ const ReportIssue = ({ user, onIssueCreated }) => {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFilePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -25,22 +43,34 @@ const ReportIssue = ({ user, onIssueCreated }) => {
     setSuccess('');
 
     try {
-      // Note: Location field is included in frontend but not in backend model
-      // Your friend will need to add location field to Issue model
-      const issueData = {
-        title: formData.title,
-        description: `${formData.description}\n\nLocation: ${formData.location}`
-      };
+      // Create FormData for file upload
+      const submitData = new FormData();
+      submitData.append('title', formData.title);
+      submitData.append('report', formData.description); // Using 'report' to match backend schema
+      submitData.append('address', formData.location);
+      submitData.append('category', formData.category);
+      submitData.append('priority', formData.priority);
       
-      await issueAPI.createIssue(issueData);
-      setSuccess('Issue reported successfully!');
-      setFormData({ title: '', description: '', location: '' });
+      if (selectedFile) {
+        submitData.append('photo', selectedFile);
+      }
+      
+      await issueAPI.createIssueWithPhoto(submitData);
+      setSuccess('Issue reported successfully with photo!');
+      setFormData({ title: '', description: '', location: '', category: 'other', priority: 'medium' });
+      setSelectedFile(null);
+      setFilePreview(null);
       if (onIssueCreated) onIssueCreated();
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
   };
 
   return (
@@ -88,6 +118,59 @@ const ReportIssue = ({ user, onIssueCreated }) => {
               required
               placeholder="Enter the location of the issue"
             />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Category:</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                <option value="infrastructure">Infrastructure</option>
+                <option value="sanitation">Sanitation</option>
+                <option value="transportation">Transportation</option>
+                <option value="utilities">Utilities</option>
+                <option value="environment">Environment</option>
+                <option value="safety">Safety</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label>Priority:</label>
+              <select
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label>Photo (Optional):</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="file-input"
+            />
+            <small className="file-help">Upload an image to help illustrate the issue (Max: 5MB)</small>
+            
+            {filePreview && (
+              <div className="file-preview">
+                <img src={filePreview} alt="Preview" className="preview-image" />
+                <button type="button" onClick={removeFile} className="remove-file-btn">
+                  Remove Photo
+                </button>
+              </div>
+            )}
           </div>
           
           <button type="submit" disabled={loading} className="submit-button">

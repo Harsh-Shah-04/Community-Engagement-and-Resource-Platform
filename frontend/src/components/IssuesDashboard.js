@@ -25,9 +25,11 @@ const IssuesDashboard = ({ user }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'open': return '#e74c3c'; // Red
-      case 'in-progress': return '#f39c12'; // Orange
+      case 'reported': return '#e74c3c'; // Red
+      case 'assigned': return '#f39c12'; // Orange  
+      case 'in-progress': return '#3498db'; // Blue
       case 'resolved': return '#27ae60'; // Green
+      case 'closed': return '#95a5a6'; // Gray
       default: return '#95a5a6'; // Gray
     }
   };
@@ -51,16 +53,18 @@ const IssuesDashboard = ({ user }) => {
         <label>Filter by status:</label>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="all">All Issues</option>
-          <option value="open">Open</option>
+          <option value="reported">Reported</option>
+          <option value="assigned">Assigned</option>
           <option value="in-progress">In Progress</option>
           <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
         </select>
       </div>
 
       <div className="issues-stats">
         <div className="stat-item">
-          <span className="stat-number">{issues.filter(i => i.status === 'open').length}</span>
-          <span className="stat-label">Open</span>
+          <span className="stat-number">{issues.filter(i => i.status === 'reported').length}</span>
+          <span className="stat-label">Reported</span>
         </div>
         <div className="stat-item">
           <span className="stat-number">{issues.filter(i => i.status === 'in-progress').length}</span>
@@ -79,7 +83,7 @@ const IssuesDashboard = ({ user }) => {
           filteredIssues.map((issue) => (
             <div key={issue._id} className="issue-card">
               <div className="issue-header">
-                <h3 className="issue-title">{issue.title}</h3>
+                <h3 className="issue-title">{issue.report || issue.title || 'Untitled Issue'}</h3>
                 <div 
                   className="status-badge"
                   style={{ backgroundColor: getStatusColor(issue.status) }}
@@ -88,11 +92,38 @@ const IssuesDashboard = ({ user }) => {
                 </div>
               </div>
               
-              <p className="issue-description">{issue.description}</p>
+              {/* Display photo if available */}
+              {issue.photo && issue.photo.filename && (
+                <div className="issue-photo">
+                  <img 
+                    src={`http://localhost:5000/uploads/${issue.photo.filename}`} 
+                    alt="Issue" 
+                    className="issue-image"
+                  />
+                </div>
+              )}
+              
+              <p className="issue-description">{issue.report || issue.description}</p>
+              
+              <div className="issue-details">
+                <div className="issue-location">
+                  <strong>Location:</strong> {issue.location?.address || 'Not specified'}
+                </div>
+                {issue.category && (
+                  <div className="issue-category">
+                    <strong>Category:</strong> {issue.category}
+                  </div>
+                )}
+                {issue.priority && (
+                  <div className="issue-priority">
+                    <strong>Priority:</strong> {issue.priority}
+                  </div>
+                )}
+              </div>
               
               <div className="issue-footer">
                 <div className="issue-meta">
-                  <span>Reported by: {issue.createdBy?.name || 'Anonymous'}</span>
+                  <span>Reported by: {issue.reportedBy?.name || 'Anonymous'}</span>
                   <span>Date: {new Date(issue.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
