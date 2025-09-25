@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import issueRoutes from "./routes/issueRoutes.js";
-import complaintRoutes from "./routes/complaintRoutes.js";
+// import complaintRoutes from "./routes/complaintRoutes.js";  // Temporarily disabled
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 // Get current directory for ES modules
@@ -30,8 +30,8 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/users", userRoutes);
 
-// Complaint routes (our implementation)
-app.use("/api/complaints", complaintRoutes);
+// Complaint routes (temporarily disabled until multer issue resolved)
+// app.use("/api/complaints", complaintRoutes);
 
 // Issue routes (from remote)
 app.use("/api/issues", issueRoutes);
