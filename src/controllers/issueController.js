@@ -3,7 +3,7 @@ import Issue from "../models/Issue.js";
 // Create new issue
 export const createIssue = async (req, res) => {
   try {
-    const { title, description, location } = req.body;
+    const { title, description, location, category, priority } = req.body;
 
     if (!title || !description || !location) {
       return res.status(400).json({ message: "Title, description, and location are required" });
@@ -13,6 +13,8 @@ export const createIssue = async (req, res) => {
       title,
       description,
       location,
+      category: category || 'other',
+      priority: priority || 'medium',
       createdBy: req.user.id, // from authMiddleware
     });
 

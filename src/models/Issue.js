@@ -19,6 +19,24 @@ const issueSchema = new mongoose.Schema(
       enum: ["open", "in-progress", "resolved"],
       default: "open",
     },
+    priority: {
+      type: String,
+      enum: ['low', 'medium', 'high', 'critical'],
+      default: 'medium'
+    },
+    category: {
+      type: String,
+      enum: [
+        'infrastructure', 
+        'sanitation', 
+        'transportation', 
+        'utilities', 
+        'environment', 
+        'safety', 
+        'other'
+      ],
+      default: 'other'
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // link issue to the user who created it
