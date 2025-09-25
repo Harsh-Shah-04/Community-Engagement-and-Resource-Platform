@@ -1,7 +1,24 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// Middleware to protect routes (only authenticated users can access) - Enhanced version
+// Simple auth middleware (main one used in routes)
+const authMiddleware = (req, res, next) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) {
+    return res.status(401).json({ message: "No token, authorization denied" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret_key");
+    req.user = decoded; // This now contains { id, role } from login
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Token is not valid" });
+  }
+};
+
+// Enhanced middleware (if needed later)
 export const protect = async (req, res, next) => {
   try {
     let token;
@@ -16,35 +33,18 @@ export const protect = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret_key");
     
     // Get user from token and attach to req
-    req.user = await User.findById(decoded.userId).select("-password");
+    req.user = await User.findById(decoded.id).select("-password"); // Use decoded.id not decoded.userId
     
     if (!req.user) {
       return res.status(401).json({ message: "User not found" });
     }
 
-    next(); // proceed to next middleware/route
-  } catch (error) {
-    res.status(401).json({ message: "Not authorized, token failed" });
-  }
-};
-
-// Simple auth middleware (for backward compatibility)
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
-
-  if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // add user data to request
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token is not valid" });
+    res.status(401).json({ message: "Not authorized, token failed" });
   }
 };
 

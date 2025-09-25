@@ -1,7 +1,22 @@
 import multer from "multer";
+import path from "path";
+import { fileURLToPath } from 'url';
 
-// Configure multer to store files in memory (not disk) so we can save to MongoDB
-const storage = multer.memoryStorage();
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Configure multer to store files on disk
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../../uploads')); // Save to uploads folder
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename: timestamp-random-originalname
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
 
 // File filter - only allow image files
 const fileFilter = (req, file, cb) => {
