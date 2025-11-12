@@ -46,19 +46,23 @@ const AdminPanel = ({ user }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'open': return '#e74c3c';
-      case 'in-progress': return '#f39c12';
+      case 'reported': return '#e74c3c';
+      case 'assigned': return '#f39c12';
+      case 'in-progress': return '#3498db';
       case 'resolved': return '#27ae60';
+      case 'closed': return '#95a5a6';
       default: return '#95a5a6';
     }
   };
+
+
 
   if (user?.role !== 'admin') {
     return (
       <div className="admin-panel">
         <div className="access-denied">
           <h2>Access Denied</h2>
-          <p>You don't have permission to access the admin panel.</p>
+          <p>You don't have permission to access the admin panel. This area is restricted to government officials only.</p>
         </div>
       </div>
     );
@@ -71,7 +75,7 @@ const AdminPanel = ({ user }) => {
     <div className="admin-panel">
       <div className="admin-header">
         <h2>Government Admin Panel</h2>
-        <p>Manage and resolve community issues</p>
+        <p>Manage and resolve community issues efficiently</p>
       </div>
 
       <div className="admin-stats">
@@ -94,7 +98,7 @@ const AdminPanel = ({ user }) => {
       </div>
 
       <div className="admin-issues-list">
-        <h3>Manage Issues</h3>
+        <h3>Manage All Issues</h3>
         {issues.map((issue) => (
           <div key={issue._id} className="admin-issue-card">
             <div className="issue-content">
@@ -124,13 +128,13 @@ const AdminPanel = ({ user }) => {
               <div className="issue-details">
                 <div><strong>Location:</strong> {issue.location?.address || 'Not specified'}</div>
                 <div><strong>Category:</strong> {issue.category || 'other'}</div>
-                <div><strong>Priority:</strong> {issue.priority || 'medium'}</div>
+                <div><strong>Priority:</strong> {issue.priority?.toUpperCase() || 'MEDIUM'}</div>
               </div>
               
               <div className="issue-meta">
-                <span>Reported by: {issue.reportedBy?.name || 'Anonymous'}</span>
+                <span>Reporter: {issue.reportedBy?.name || 'Anonymous'}</span>
                 <span>Email: {issue.reportedBy?.email || 'N/A'}</span>
-                <span>Date: {new Date(issue.createdAt).toLocaleDateString()}</span>
+                <span>Date: {new Date(issue.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
               </div>
             </div>
             

@@ -77,7 +77,7 @@ const ReportIssue = ({ user, onIssueCreated }) => {
     <div className="report-issue-container">
       <div className="report-issue-form">
         <h2>Report a Community Issue</h2>
-        <p>Help improve your community by reporting problems that need attention.</p>
+        <p>Help improve your community by reporting problems that need attention</p>
         
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
@@ -91,19 +91,19 @@ const ReportIssue = ({ user, onIssueCreated }) => {
               value={formData.title}
               onChange={handleChange}
               required
-              placeholder="Brief title of the issue"
+              placeholder="e.g., Broken streetlight on Main Street"
               maxLength="100"
             />
           </div>
           
           <div className="form-group">
-            <label>Description:</label>
+            <label>Detailed Description:</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               required
-              placeholder="Describe the issue in detail..."
+              placeholder="Provide as much detail as possible to help officials understand and resolve the issue..."
               rows="5"
             />
           </div>
@@ -116,7 +116,7 @@ const ReportIssue = ({ user, onIssueCreated }) => {
               value={formData.location}
               onChange={handleChange}
               required
-              placeholder="Enter the location of the issue"
+              placeholder="e.g., Main Street, near City Hall"
             />
           </div>
 
@@ -139,7 +139,7 @@ const ReportIssue = ({ user, onIssueCreated }) => {
             </div>
             
             <div className="form-group">
-              <label>Priority:</label>
+              <label>Priority Level:</label>
               <select
                 name="priority"
                 value={formData.priority}
@@ -154,14 +154,14 @@ const ReportIssue = ({ user, onIssueCreated }) => {
           </div>
           
           <div className="form-group">
-            <label>Photo (Optional):</label>
+            <label>Upload Photo (Optional):</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
               className="file-input"
             />
-            <small className="file-help">Upload an image to help illustrate the issue (Max: 5MB)</small>
+            <small className="file-help">A picture helps illustrate the issue. Maximum file size: 5MB</small>
             
             {filePreview && (
               <div className="file-preview">
@@ -174,7 +174,7 @@ const ReportIssue = ({ user, onIssueCreated }) => {
           </div>
           
           <button type="submit" disabled={loading} className="submit-button">
-            {loading ? 'Submitting...' : 'Report Issue'}
+            {loading ? 'Submitting Report...' : 'Submit Issue Report'}
           </button>
         </form>
       </div>

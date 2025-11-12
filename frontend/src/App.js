@@ -70,7 +70,7 @@ function App() {
         
         {user ? (
           <div className="user-menu">
-            <span>Welcome, {user.name}!</span>
+            <span>Welcome, {user.name}</span>
             <button className="nav-btn logout" onClick={handleLogout}>
               Logout
             </button>
@@ -128,9 +128,6 @@ function App() {
       <main className="main-content">
         {renderContent()}
       </main>
-      <footer className="footer">
-        <p>&copy; 2025 Community Engagement Platform - Connecting Citizens with Government</p>
-      </footer>
     </div>
   );
 }
