@@ -36,19 +36,22 @@ const Login = ({ onLogin }) => {
   return (
     <div className="auth-container">
       <div className="auth-form">
-        <h2>Login to Community Platform</h2>
+        <h2>Welcome Back</h2>
+        <p style={{ textAlign: 'center', color: '#718096', marginBottom: '2rem' }}>
+          Login to report issues and make your community better
+        </p>
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email:</label>
+            <label>Email Address:</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
+              placeholder="your.email@example.com"
             />
           </div>
           
@@ -68,6 +71,10 @@ const Login = ({ onLogin }) => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#718096' }}>
+          Don't have an account? Click Register above
+        </p>
       </div>
     </div>
   );
